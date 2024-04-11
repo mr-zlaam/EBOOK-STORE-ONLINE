@@ -9,6 +9,6 @@ app.get("/", (req, res) => {
   });
 });
 //Gloabl handler
-app.use("/api/users", userRouter);
 app.use(GlobalErrHandler);
+app.use("/api/users", userRouter);
 export default app;

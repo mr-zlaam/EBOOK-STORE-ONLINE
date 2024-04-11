@@ -36,8 +36,8 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     res.status(201).json({
+      message: "OK",
       accessToken: token,
-      message: "User registered successfully",
     });
   } catch (error: any) {
     console.log("Registration failed :: ", error.message);
@@ -48,11 +48,30 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 };
 const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      throw createHttpError(400, "This field is required");
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw createHttpError(404, "User not found");
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw createHttpError(400, "Invalid credentials");
+    }
+    const token = sign({ sub: user._id }, jwtSecrete, {
+      expiresIn: "7d",
+    });
     res.json({
       message: "OK",
+      accessToken: token,
     });
   } catch (error: any) {
     console.log(error.message);
+    return res.status(error.status || 500).json({
+      message: error.message || "Login failed",
+    });
   }
 };
 export { createUser, loginUser };
