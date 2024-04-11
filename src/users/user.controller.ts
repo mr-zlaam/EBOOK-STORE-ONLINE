@@ -35,7 +35,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       expiresIn: "7d",
     });
 
-    res.status(200).json({
+    res.status(201).json({
       accessToken: token,
       message: "User registered successfully",
     });
@@ -46,5 +46,13 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     });
   }
 };
-
-export { createUser };
+const loginUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    res.json({
+      message: "OK",
+    });
+  } catch (error: any) {
+    console.log(error.message);
+  }
+};
+export { createUser, loginUser };
