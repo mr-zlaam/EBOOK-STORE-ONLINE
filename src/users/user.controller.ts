@@ -28,7 +28,6 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     // Token generation
     const token = sign({ sub: newUser._id }, jwtSecrete, {
       expiresIn: "7d",
-      algorithm: "RS256",
     });
     res.status(200).json({
       accessToken: token,
