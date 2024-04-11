@@ -9,6 +9,7 @@ dotenv.config({
 const _config = {
   port: process.env.PORT || 3000,
   connectionString: process.env.connectionstr || "",
-  env: process.env.ENVIRONMENT, //change it during the production
+  env: process.env.ENVIRONMENT, //Todo:change it during the production
+  jwtSecrete: process.env.JWT_SECRET as string,
 };
 export const config = Object.freeze(_config);
