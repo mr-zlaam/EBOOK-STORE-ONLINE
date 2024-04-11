@@ -8,6 +8,7 @@ dotenv.config({
 
 const _config = {
   port: process.env.PORT || 3000,
+  connectionString: process.env.connectionstr || "",
 };
 console.log(_config.port);
 export const config = Object.freeze(_config);
