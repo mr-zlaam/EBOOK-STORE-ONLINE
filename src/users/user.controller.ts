@@ -8,19 +8,24 @@ import { config } from "../config/config.ts";
 const { jwtSecrete } = config;
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { username, email, password: pass } = req.body;
-    if (!username || !email || !pass) {
+    const { username, displayName, email, password: pass } = req.body;
+    if (!username || !displayName || !email || !pass) {
       throw createHttpError(400, "All fields are required");
     }
-    const user = await User.findOne({ email });
-    if (user) {
-      throw createHttpError(400, "User already exists with the same email.");
+
+    // Check if username or email already exists
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    if (existingUser) {
+      throw createHttpError(400, "Username or email already exists");
     }
+
     // Hash password using bcrypt
     const hashedPassword = await bcrypt.hash(pass, 10);
-    console.log(hashedPassword);
+
+    // Create new user
     const newUser = await User.create({
       username,
+      displayName,
       email,
       password: hashedPassword,
     });
@@ -29,6 +34,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const token = sign({ sub: newUser._id }, jwtSecrete, {
       expiresIn: "7d",
     });
+
     res.status(200).json({
       accessToken: token,
       message: "User registered successfully",
