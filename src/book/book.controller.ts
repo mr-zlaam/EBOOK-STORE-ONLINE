@@ -4,6 +4,7 @@ import path from "node:path";
 import createHttpError from "http-errors";
 import { BookModel } from "./book.model";
 import fs from "node:fs";
+import type { AuthRequest } from "../middlewares/authenticate";
 const createBook = async (req: Request, res: Response, next: NextFunction) => {
   const { title, genre } = req.body;
   //*************************************************** */
@@ -67,10 +68,11 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
     return createHttpError(500, "Error while uploading Pdf files");
   }
   // Uploading data to the mongodb
+  const _req = req as AuthRequest;
   const newBook = await BookModel.create({
     title,
     genre,
-    author: "66181855d7caa65abc40d4a0",
+    author: _req.userId,
     coverImage: ImageUploadResult.secure_url,
     file: bookFileUploadResult.secure_url,
   });
@@ -78,8 +80,7 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
     id: newBook._id,
     message: `File and CoverImage uploaded successfully`,
     pdfFile: bookFileUploadResult,
+    coverImage: ImageUploadResult,
   });
-  //@ts-ignore
-  console.log(req.userId);
 };
 export { createBook };
