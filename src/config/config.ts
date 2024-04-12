@@ -11,5 +11,8 @@ const _config = {
   connectionString: process.env.connectionstr || "",
   env: process.env.ENVIRONMENT, //Todo:change it during the production
   jwtSecrete: process.env.JWT_SECRET as string,
+  cloud_name: process.env.CLOUD_NAME as string,
+  cloudinary_api_key: process.env.CLOUDINARY_API_KEY as string,
+  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET as string,
 };
 export const config = Object.freeze(_config);
