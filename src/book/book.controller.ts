@@ -2,8 +2,10 @@ import { type NextFunction, type Request, type Response } from "express";
 import cloudinary from "../config/cloudinary";
 import path from "node:path";
 import createHttpError from "http-errors";
-
+import { BookModel } from "./book.model";
+import fs from "node:fs";
 const createBook = async (req: Request, res: Response, next: NextFunction) => {
+  const { title, genre } = req.body;
   //*************************************************** */
   //CoverImage Upload
   let ImageUploadResult;
@@ -24,8 +26,12 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
       folder: "book-covers",
       format: coverImageMimeType,
     });
-
     console.log("ImageUploadResult:", ImageUploadResult);
+    try {
+      await fs.promises.unlink(filePath);
+    } catch (error: any) {
+      console.log(error.message);
+    }
   } catch (error: any) {
     console.log(error.message);
     return createHttpError(500, "Error while uploading coverImage");
@@ -49,13 +55,28 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
       format: "pdf",
     });
     console.log("BookFileUploadResult:", bookFileUploadResult);
+
+    //Deleting temp files from public folder
+    try {
+      await fs.promises.unlink(bookFilePath);
+    } catch (error: any) {
+      console.log(error.message);
+    }
   } catch (error: any) {
     console.log(error.message);
     return createHttpError(500, "Error while uploading Pdf files");
   }
-  res.status(200).json({
-    message: "OK",
-    coverImage: ImageUploadResult,
+  // Uploading data to the mongodb
+  const newBook = await BookModel.create({
+    title,
+    genre,
+    author: "66181855d7caa65abc40d4a0",
+    coverImage: ImageUploadResult.secure_url,
+    file: bookFileUploadResult.secure_url,
+  });
+  res.status(201).json({
+    id: newBook._id,
+    message: `File and CoverImage uploaded successfully`,
     pdfFile: bookFileUploadResult,
   });
 };
