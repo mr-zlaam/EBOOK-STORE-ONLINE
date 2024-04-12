@@ -1,6 +1,7 @@
 import express from "express";
 import GlobalErrHandler from "./middlewares/GlobalErrHandler.middleware.ts";
 import userRouter from "./users/userRouter.ts";
+import bookRouter from "./book/bookRouter.ts";
 const app = express();
 app.use(express.json());
 app.get("/", (req, res) => {
@@ -11,4 +12,5 @@ app.get("/", (req, res) => {
 //Gloabl handler
 app.use(GlobalErrHandler);
 app.use("/api/users", userRouter);
+app.use("/api/books", bookRouter);
 export default app;
