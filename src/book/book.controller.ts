@@ -1,6 +1,7 @@
 import { type NextFunction, type Request, type Response } from "express";
 import cloudinary from "../config/cloudinary";
 import path from "node:path";
+import createHttpError from "http-errors";
 
 const createBook = async (req: Request, res: Response, next: NextFunction) => {
   //*************************************************** */
@@ -27,10 +28,7 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
     console.log("ImageUploadResult:", ImageUploadResult);
   } catch (error: any) {
     console.log(error.message);
-    return res.status(400).json({
-      message: "Error uploading cover image",
-      data: null,
-    });
+    return createHttpError(500, "Error while uploading coverImage");
   }
 
   // **************************************************************************
@@ -53,10 +51,7 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
     console.log("BookFileUploadResult:", bookFileUploadResult);
   } catch (error: any) {
     console.log(error.message);
-    return res.status(400).json({
-      message: "Error uploading book file",
-      data: null,
-    });
+    return createHttpError(500, "Error while uploading Pdf files");
   }
   res.status(200).json({
     message: "OK",
