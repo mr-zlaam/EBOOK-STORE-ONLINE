@@ -15,6 +15,9 @@ const userSchema: Schema<UserTypes> = new Schema(
       required: [true, "username is required"],
       unique: true,
       match: [/^[a-z0-9_]{3,30}$/, "Username is not valid"],
+      lowercase: true,
+      trim: true,
+      index: true,
     },
     displayName: {
       type: String,
@@ -24,6 +27,8 @@ const userSchema: Schema<UserTypes> = new Schema(
       type: String,
       required: [true, "email is required"],
       unique: true,
+      lowercase: true,
+      trim: true,
       match: [
         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
         "Email address is not valid.",
