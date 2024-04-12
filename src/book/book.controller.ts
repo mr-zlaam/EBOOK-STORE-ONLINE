@@ -79,5 +79,7 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
     message: `File and CoverImage uploaded successfully`,
     pdfFile: bookFileUploadResult,
   });
+  //@ts-ignore
+  console.log(req.userId);
 };
 export { createBook };
