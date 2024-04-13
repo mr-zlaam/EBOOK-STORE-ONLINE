@@ -6,6 +6,7 @@ import authenticate from "../middlewares/authenticate.ts";
 import { updateBook } from "./updateBook.controller.ts";
 import { listBooks } from "./listBooks.controller.ts";
 import { listOneBook } from "./listOneBook.controller.ts";
+import { deleteBook } from "./deleteBook.controller.ts";
 
 const bookRouter = Router();
 //routes
@@ -33,5 +34,6 @@ bookRouter.patch(
 );
 bookRouter.get("/", listBooks);
 bookRouter.get("/:bookId", listOneBook);
+bookRouter.delete("/:bookId", authenticate, deleteBook);
 
 export default bookRouter;
