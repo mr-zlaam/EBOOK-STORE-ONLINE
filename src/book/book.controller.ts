@@ -30,13 +30,22 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
     });
     try {
       await fs.promises.unlink(filePath);
-      console.log("Book Cover deleted successfully after updating.");
+      console.log("Book Cover deleted successfully after uploading.");
     } catch (error: any) {
       console.log(error.message);
+      return next(
+        res.status(500).json({
+          error: "Something went wrong while uploading",
+        })
+      );
     }
   } catch (error: any) {
     console.log(error.message);
-    return createHttpError(500, "Error while uploading coverImage");
+    return next(
+      res.status(500).json({
+        error: "Error while uploading.",
+      })
+    );
   }
 
   // **************************************************************************
@@ -62,11 +71,19 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
       await fs.promises.unlink(bookFilePath);
       console.log("BookFile deleted successfully after uploading");
     } catch (error: any) {
-      console.log(error.message);
+      return next(
+        res.status(500).json({
+          error: "Something went wrong while uploading",
+        })
+      );
     }
   } catch (error: any) {
     console.log(error.message);
-    return createHttpError(500, "Error while uploading Pdf files");
+    return next(
+      res.status(500).json({
+        error: "Something went wrong while uploading uploading pdfs",
+      })
+    );
   }
   // Uploading data to the mongodb
   const _req = req as AuthRequest;

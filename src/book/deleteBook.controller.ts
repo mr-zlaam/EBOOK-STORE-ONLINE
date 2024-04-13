@@ -55,12 +55,19 @@ export const deleteBook = async (
       await BookModel.deleteOne({ _id: bookId });
     } catch (error: any) {
       console.log(error.message);
+      return next(
+        res.status(500).json({
+          error: "Something went wrong while deleting",
+        })
+      );
     }
-    return res.status(204).json({
-      success: true,
-      message: "Book deleted successfully",
-      data: null,
-    });
+    return next(
+      res.status(204).json({
+        success: true,
+        message: "Book deleted successfully",
+        data: null,
+      })
+    );
   } catch (error: any) {
     console.log(error.message);
     return next(
