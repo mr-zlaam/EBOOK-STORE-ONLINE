@@ -3,13 +3,13 @@
 To install dependencies:
 
 ```bash
-bun install
+npm install
 ```
 
 To run:
 
 ```bash
-bun run index.js
+npm run dev
 ```
 
-### Bun is used for this project.
+## Backend For Ebook App Using rest API
