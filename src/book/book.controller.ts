@@ -28,9 +28,9 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
       folder: "book-covers",
       format: coverImageMimeType,
     });
-    console.log("ImageUploadResult:", ImageUploadResult);
     try {
       await fs.promises.unlink(filePath);
+      console.log("Book Cover deleted successfully after updating.");
     } catch (error: any) {
       console.log(error.message);
     }
@@ -56,11 +56,11 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
       folder: "book-pdfs",
       format: "pdf",
     });
-    console.log("BookFileUploadResult:", bookFileUploadResult);
 
     //Deleting temp files from public folder
     try {
       await fs.promises.unlink(bookFilePath);
+      console.log("BookFile deleted successfully after uploading");
     } catch (error: any) {
       console.log(error.message);
     }

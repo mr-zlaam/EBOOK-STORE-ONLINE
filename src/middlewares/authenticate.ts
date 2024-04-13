@@ -21,7 +21,7 @@ const authenticate = async (
     const decoded = verify(parsedToken, config.jwtSecrete);
     if (!decoded) return next(createHttpError(401, "Invalid token"));
     const _req = req as AuthRequest;
-    console.log("decoded", decoded);
+
     _req.userId = decoded.sub as string;
   } catch (error) {
     return res.status(401).json({
