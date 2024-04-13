@@ -14,6 +14,14 @@ export const updateBook = async (
     const { title, genre } = req.body;
     const bookId = req.params.bookId;
     const book = await BookModel.findOne({ _id: bookId });
+    const coverFilesSplit = book?.coverImage.split("/");
+    const coverImagePublicId =
+      coverFilesSplit?.at(-2) +
+      "/" +
+      coverFilesSplit?.at(-1)?.split(".").at(-2);
+    const bookFilesSplit = book?.file.split("/");
+    const bookFilePublicId =
+      bookFilesSplit?.at(-2) + "/" + bookFilesSplit?.at(-1);
     if (!book) {
       return res.status(404).json({
         success: false,
@@ -29,6 +37,7 @@ export const updateBook = async (
     }
     let completeCoverImage = "";
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
     if (files.coverImage) {
       const fileName = files.coverImage[0].filename;
       const converMimeType = files.coverImage[0].mimetype.split("/").at(-1);
@@ -40,9 +49,11 @@ export const updateBook = async (
       let uploadResult;
       try {
         uploadResult = await cloudinary.uploader.upload(filePath, {
+          public_id: coverImagePublicId,
           filename_override: completeCoverImage,
-          folder: "book-covers",
           format: converMimeType,
+          overwrite: true,
+          invalidate: true,
         });
       } catch (error: any) {
         console.log(error.message);
@@ -65,10 +76,12 @@ export const updateBook = async (
       );
       completeFileName = bookFileName;
       const uploadResultPdf = await cloudinary.uploader.upload(bookFilePath, {
+        public_id: bookFilePublicId,
         resource_type: "raw",
         filename_override: completeFileName,
-        folder: "book-pdfs",
         format: "pdf",
+        overwrite: true,
+        invalidate: true,
       });
       completeFileName = uploadResultPdf?.secure_url;
       try {
