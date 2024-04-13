@@ -5,6 +5,7 @@ import path from "node:path";
 import authenticate from "../middlewares/authenticate.ts";
 import { updateBook } from "./updateBook.controller.ts";
 import { listBooks } from "./listBooks.controller.ts";
+import { listOneBook } from "./listOneBook.controller.ts";
 
 const bookRouter = Router();
 //routes
@@ -31,5 +32,6 @@ bookRouter.patch(
   updateBook
 );
 bookRouter.get("/", listBooks);
+bookRouter.get("/:bookId", listOneBook);
 
 export default bookRouter;
