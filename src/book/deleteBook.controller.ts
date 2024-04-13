@@ -1,5 +1,6 @@
 import { type Request, type Response, type NextFunction } from "express";
 import { BookModel } from "./book.model.ts";
+import type { AuthRequest } from "../middlewares/authenticate.ts";
 
 export const deleteBook = async (
   req: Request,
@@ -10,6 +11,15 @@ export const deleteBook = async (
 
   try {
     const book = await BookModel.findByIdAndDelete(bookId);
+    const _req = req as AuthRequest;
+    if (book?.author.toString() !== _req.userId) {
+      return next(
+        res.status(403).json({
+          success: false,
+          message: "unauthorized User",
+        })
+      );
+    }
     if (!book) {
       return next(
         res.status(400).json({
