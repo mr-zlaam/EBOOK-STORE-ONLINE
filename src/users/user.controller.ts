@@ -1,22 +1,29 @@
 //TODO:Visit https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses to check status code
-import { type NextFunction, type Request, type Response } from "express";
-import createHttpError from "http-errors";
-import { User } from "./user.model.ts";
 import bcrypt from "bcrypt";
+import { type NextFunction, type Request, type Response } from "express";
 import { sign } from "jsonwebtoken";
 import { config } from "../config/config.ts";
+import { User } from "./user.model.ts";
 const { jwtSecrete } = config;
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username, displayName, email, password: pass } = req.body;
     if (!username || !displayName || !email || !pass) {
-      throw createHttpError(400, "All fields are required");
+      return res.status(403).json({
+        success: false,
+        status: 403,
+        message: "Please provide all required fields",
+      });
     }
 
     // Check if username or email already exists
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
-      throw createHttpError(400, "Username or email already exists");
+      return res.status(409).json({
+        success: false,
+        status: 409,
+        message: "Username or email already exists",
+      });
     }
 
     // Hash password using bcrypt
@@ -42,6 +49,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   } catch (error: any) {
     console.log("Registration failed :: ", error.message);
     return res.status(error.status || 500).json({
+      success: false,
       message: error.message || "Registration failed",
     });
   }
@@ -50,15 +58,32 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      throw createHttpError(400, "This field is required");
+      return res.status(403).json({
+        success: false,
+        status: 403,
+        message: "Please provide all required fields",
+      });
     }
-    const user = await User.findOne({ email });
+    let user = null;
+    try {
+      user = await User.findOne({ email });
+    } catch (error: any) {
+      return res.status(error.statusCode || 400).json({
+        success: false,
+        statusCode: error.statusCode,
+        message: error.message,
+      });
+    }
     if (!user) {
-      throw createHttpError(404, "User not found");
+      return res.status(400).json({
+        message: "Invalid credentials",
+      });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw createHttpError(400, "Invalid credentials");
+      return res.status(403).json({
+        message: "Invalid credentials",
+      });
     }
     const token = sign({ sub: user._id }, jwtSecrete, {
       expiresIn: "7d",

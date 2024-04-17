@@ -25,6 +25,7 @@ export const listBooks = async (
       : {};
 
     const books = await BookModel.find(searchCondition)
+      .populate("author", "displayName")
       .skip(startIndex)
       .limit(limit);
 

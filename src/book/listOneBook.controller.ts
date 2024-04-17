@@ -7,7 +7,10 @@ export const listOneBook = async (
 ) => {
   const { bookId } = req.params;
   try {
-    const book = await BookModel.findOne({ _id: bookId });
+    const book = await BookModel.findOne({ _id: bookId }).populate(
+      "author",
+      "displayName"
+    );
     if (!book) {
       return next(
         res.status(400).json({

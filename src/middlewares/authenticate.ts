@@ -21,12 +21,11 @@ const authenticate = async (
     const decoded = verify(parsedToken, config.jwtSecrete);
     if (!decoded) return next(createHttpError(401, "Invalid token"));
     const _req = req as AuthRequest;
-
     _req.userId = decoded.sub as string;
-  } catch (error) {
+  } catch (error: any) {
     return res.status(401).json({
       success: false,
-      message: "token is expired",
+      message: error.message,
     });
   }
 

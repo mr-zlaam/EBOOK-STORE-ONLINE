@@ -86,6 +86,7 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
   }
   // Uploading data to the mongodb
   const _req = req as AuthRequest;
+
   const newBook = await BookModel.create({
     title,
     genre,
@@ -94,10 +95,17 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
     file: bookFileUploadResult.secure_url,
   });
   res.status(201).json({
-    id: newBook._id,
-    message: `File and CoverImage uploaded successfully`,
-    pdfFile: bookFileUploadResult,
-    coverImage: ImageUploadResult,
+    success: true,
+    statusCode: 201,
+    data: {
+      id: newBook._id,
+      title: newBook.title,
+      genre: newBook.genre,
+      author: newBook.author,
+      coverImage: newBook.coverImage,
+      file: newBook.file,
+      message: `File and CoverImage uploaded successfully`,
+    },
   });
 };
 export { createBook };

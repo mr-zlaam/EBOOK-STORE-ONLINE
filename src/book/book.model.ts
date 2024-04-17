@@ -9,7 +9,7 @@ const bookSchema = new Schema<Book>(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Author",
+      ref: "User",
       required: [true, "Author's name is required"],
     },
     coverImage: {
