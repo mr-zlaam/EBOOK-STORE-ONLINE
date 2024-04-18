@@ -17,7 +17,7 @@ export const deleteBook = async (
       return next(
         res.status(403).json({
           success: false,
-          message: "unauthorized User",
+          message: "Book is already deleted",
         })
       );
     }
@@ -53,6 +53,11 @@ export const deleteBook = async (
     }
     try {
       await BookModel.deleteOne({ _id: bookId });
+      return res.status(204).json({
+        success: true,
+        message: "Book deleted successfully",
+        data: null,
+      });
     } catch (error: any) {
       console.log(error.message);
       return next(
@@ -61,13 +66,6 @@ export const deleteBook = async (
         })
       );
     }
-    return next(
-      res.status(204).json({
-        success: true,
-        message: "Book deleted successfully",
-        data: null,
-      })
-    );
   } catch (error: any) {
     console.log(error.message);
     return next(
