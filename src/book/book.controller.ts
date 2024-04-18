@@ -6,11 +6,27 @@ import cloudinary from "../config/cloudinary";
 import type { AuthRequest } from "../middlewares/authenticate";
 import { BookModel } from "./book.model";
 const createBook = async (req: Request, res: Response, next: NextFunction) => {
-  const { title, genre } = req.body;
+  const { title, genre, description, bookAuthor } = req.body;
   //*************************************************** */
   //CoverImage Upload
   let ImageUploadResult;
   const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+  if (!title || !description || !genre || !bookAuthor || !files) {
+    return res.status(403).json({
+      success: false,
+      statusCode: 403,
+      error: "Provide all fields ",
+    });
+  }
+  if (description.length < 10 || description.length > 1000) {
+    return res.status(403).json({
+      success: false,
+      statusCode: 403,
+      error:
+        "Description must be greater than 10 words and less than 1000 words",
+    });
+  }
+
   try {
     const coverImageMimeType = files.coverImage[0].mimetype.split("/").at(-1);
 
@@ -27,6 +43,7 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
       folder: "book-covers",
       format: coverImageMimeType,
     });
+
     try {
       await fs.promises.unlink(filePath);
       console.log("Book Cover deleted successfully after uploading.");
@@ -64,7 +81,6 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
       folder: "book-pdfs",
       format: "pdf",
     });
-
     //Deleting temp files from public folder
     try {
       await fs.promises.unlink(bookFilePath);
@@ -86,24 +102,38 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
   }
   // Uploading data to the mongodb
   const _req = req as AuthRequest;
-
-  const newBook = await BookModel.create({
-    title,
-    genre,
-    author: _req.userId,
-    coverImage: ImageUploadResult.secure_url,
-    file: bookFileUploadResult.secure_url,
-  });
+  let newBook = null;
+  try {
+    newBook = await BookModel.create({
+      title,
+      description,
+      genre,
+      bookAuthor,
+      author: _req.userId,
+      coverImage: ImageUploadResult.secure_url,
+      file: bookFileUploadResult.secure_url,
+    });
+  } catch (error: any) {
+    return next(
+      res.status(error.status || 403).json({
+        success: false,
+        statusCode: error.status || 403,
+        error: error.message || "bookAuthor is required",
+      })
+    );
+  }
   res.status(201).json({
     success: true,
     statusCode: 201,
     data: {
-      id: newBook._id,
-      title: newBook.title,
-      genre: newBook.genre,
-      author: newBook.author,
-      coverImage: newBook.coverImage,
-      file: newBook.file,
+      id: newBook?._id,
+      title: newBook?.title,
+      description: newBook?.description,
+      genre: newBook?.genre,
+      author: newBook?.author,
+      bookAuthor: newBook?.bookAuthor,
+      coverImage: newBook?.coverImage,
+      file: newBook?.file,
       message: `File and CoverImage uploaded successfully`,
     },
   });

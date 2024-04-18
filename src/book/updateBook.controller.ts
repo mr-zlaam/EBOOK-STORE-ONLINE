@@ -11,9 +11,20 @@ export const updateBook = async (
   next: NextFunction
 ) => {
   try {
-    const { title, genre } = req.body;
+    const { title, genre, description, bookAuthor } = req.body;
     const bookId = req.params.bookId;
-    const book = await BookModel.findOne({ _id: bookId });
+    let book = null;
+    try {
+      book = await BookModel.findOne({ _id: bookId });
+    } catch (error: any) {
+      console.log(error.message);
+      return next(
+        res.status(403).json({
+          success: false,
+          error: error.message || "something went wrong while finding bookid",
+        })
+      );
+    }
     const coverFilesSplit = book?.coverImage.split("/");
     const coverImagePublicId =
       coverFilesSplit?.at(-2) +
@@ -37,6 +48,13 @@ export const updateBook = async (
     }
     let completeCoverImage = "";
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    if (!title || !description || !genre || !bookAuthor || !files) {
+      return res.status(403).json({
+        success: false,
+        statusCode: 403,
+        error: "Provide all fields ",
+      });
+    }
 
     if (files.coverImage) {
       const fileName = files.coverImage[0].filename;
@@ -101,6 +119,8 @@ export const updateBook = async (
         },
         {
           title: title,
+          description,
+          bookAuthor,
           genre: genre,
           coverImage: completeCoverImage ? completeCoverImage : book.coverImage,
           file: completeFileName ? completeFileName : book.file,
@@ -109,7 +129,13 @@ export const updateBook = async (
       );
     } catch (error: any) {
       console.log(error.message);
-      return;
+      return next(
+        res.status(error.status || 500).json({
+          success: false,
+          statusCode: error.status || 500,
+          message: error.message || "Error while updating the data",
+        })
+      );
     }
     return res.status(200).json(updateBook);
   } catch (error: any) {

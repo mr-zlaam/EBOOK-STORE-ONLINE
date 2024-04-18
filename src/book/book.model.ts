@@ -24,6 +24,16 @@ const bookSchema = new Schema<Book>(
       type: String,
       required: [true, "Genere is required"],
     },
+    bookAuthor: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: [true, "Description is required"],
+      minlength: [10, "Description must be at least 10 characters"],
+      maxlength: [1000, "Description must be at most 1000 characters"],
+    },
   },
   { timestamps: true }
 );
