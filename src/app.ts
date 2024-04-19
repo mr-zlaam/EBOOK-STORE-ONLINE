@@ -1,7 +1,7 @@
 import express from "express";
-import GlobalErrHandler from "./middlewares/GlobalErrHandler.middleware.ts";
-import userRouter from "./users/userRouter.ts";
-import bookRouter from "./book/bookRouter.ts";
+import GlobalErrHandler from "./middlewares/GlobalErrHandler.middleware";
+import userRouter from "./users/userRouter";
+import bookRouter from "./book/bookRouter";
 const app = express();
 import cors from "cors";
 app.use(express.json());

@@ -2,8 +2,8 @@
 import bcrypt from "bcrypt";
 import { type NextFunction, type Request, type Response } from "express";
 import { sign } from "jsonwebtoken";
-import { config } from "../config/config.ts";
-import { User } from "./user.model.ts";
+import { config } from "../config/config";
+import { User } from "./user.model";
 const { jwtSecrete } = config;
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {

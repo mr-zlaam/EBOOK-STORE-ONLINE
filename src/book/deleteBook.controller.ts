@@ -1,7 +1,7 @@
 import { type Request, type Response, type NextFunction } from "express";
-import { BookModel } from "./book.model.ts";
-import type { AuthRequest } from "../middlewares/authenticate.ts";
-import cloudinary from "../config/cloudinary.ts";
+import { BookModel } from "./book.model";
+import type { AuthRequest } from "../middlewares/authenticate";
+import cloudinary from "../config/cloudinary";
 
 export const deleteBook = async (
   req: Request,

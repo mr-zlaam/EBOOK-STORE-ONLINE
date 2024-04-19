@@ -1,7 +1,7 @@
 {
   "name": "ebook-apis",
   "module": "server.ts",
-  "type": "module",
+  "type": "commonjs",
   "main": "index.js",
   "import": {
     "paths": {
@@ -11,7 +11,11 @@
     }
   },
   "scripts": {
-    "dev": "bun --watch server.ts"
+    "build": "rimraf dist && npx tsc",
+    "prestart": "npm run build",
+    "start": "node dist/index.js",
+    "predev": "npm run build",
+    "dev": "concurrently \"tsc -w & node\" \" nodemon  dist/server.js\""
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
@@ -30,18 +34,20 @@
     "typescript-eslint": "^7.6.0"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
     "@types/cors": "^2.8.17",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.1.0",
+    "concurrently": "^8.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.1",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "rimraf": "^5.0.5"
   }
 }

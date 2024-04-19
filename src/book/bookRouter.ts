@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { createBook } from "./book.controller.ts";
+import { createBook } from "./book.controller";
 import multer from "multer";
 import path from "node:path";
-import authenticate from "../middlewares/authenticate.ts";
-import { updateBook } from "./updateBook.controller.ts";
-import { listBooks } from "./listBooks.controller.ts";
-import { listOneBook } from "./listOneBook.controller.ts";
-import { deleteBook } from "./deleteBook.controller.ts";
+import authenticate from "../middlewares/authenticate";
+import { updateBook } from "./updateBook.controller";
+import { listBooks } from "./listBooks.controller";
+import { listOneBook } from "./listOneBook.controller";
+import { deleteBook } from "./deleteBook.controller";
 
 const bookRouter = Router();
 //routes
