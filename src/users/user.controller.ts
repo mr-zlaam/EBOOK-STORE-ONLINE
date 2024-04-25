@@ -113,6 +113,9 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
     });
     res.json({
       message: "OK",
+      uid: user._id,
+      email: user.email,
+      name: user.displayName,
       accessToken: token,
     });
   } catch (error: any) {
