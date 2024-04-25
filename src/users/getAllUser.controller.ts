@@ -3,7 +3,7 @@ import { User } from "./user.model";
 
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await User.find();
+    const user = await User.find().select("-password");
     return next(
       res.status(200).json({
         success: true,

@@ -54,7 +54,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     res.status(201).json({
       message: "OK",
       accessToken: token,
-      data: newUser,
+      uid: newUser?._id,
     });
   } catch (error: any) {
     console.log("Registration failed :: ", error.message);
