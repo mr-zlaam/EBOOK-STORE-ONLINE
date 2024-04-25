@@ -30,12 +30,21 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const hashedPassword = await bcrypt.hash(pass, 10);
 
     // Create new user
-    const newUser = await User.create({
-      username,
-      displayName,
-      email,
-      password: hashedPassword,
-    });
+    let newUser = null;
+    try {
+      newUser = await User.create({
+        username,
+        displayName,
+        email,
+        password: hashedPassword,
+      });
+    } catch (error: any) {
+      console.log(error.message);
+      return res.status(500).json({
+        success: false,
+        message: error.message || "Internal server error",
+      });
+    }
 
     // Token generation
     const token = sign({ sub: newUser._id }, jwtSecrete, {
@@ -79,7 +88,16 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
         message: "Invalid credentials",
       });
     }
-    const isMatch = await bcrypt.compare(password, user.password);
+    let isMatch = null;
+    try {
+      isMatch = await bcrypt.compare(password, user.password);
+    } catch (error: any) {
+      console.log(error.message);
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
     if (!isMatch) {
       return res.status(403).json({
         message: "Invalid credentials",
