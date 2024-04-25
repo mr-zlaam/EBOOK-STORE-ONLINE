@@ -51,17 +51,21 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       expiresIn: "7d",
     });
 
-    res.status(201).json({
-      message: "OK",
-      accessToken: token,
-      uid: newUser?._id,
-    });
+    return next(
+      res.status(201).json({
+        message: "OK",
+        accessToken: token,
+        uid: newUser?._id,
+      })
+    );
   } catch (error: any) {
     console.log("Registration failed :: ", error.message);
-    return res.status(error.status || 500).json({
-      success: false,
-      message: error.message || "Registration failed",
-    });
+    return next(
+      res.status(error.status || 500).json({
+        success: false,
+        message: error.message || "Registration failed",
+      })
+    );
   }
 };
 const loginUser = async (req: Request, res: Response, next: NextFunction) => {
