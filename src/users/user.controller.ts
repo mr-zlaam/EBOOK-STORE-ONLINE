@@ -5,6 +5,7 @@ import { sign } from "jsonwebtoken";
 import { config } from "../config/config";
 import { User } from "./user.model";
 const { jwtSecrete } = config;
+// Add this comment to save the streak of github
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username, displayName, email, password: pass } = req.body;
@@ -22,7 +23,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(409).json({
         success: false,
         status: 409,
-        message: "Username or email already exists",
+        message: "User is already exists with same email or username",
       });
     }
 
